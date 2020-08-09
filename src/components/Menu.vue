@@ -1,11 +1,62 @@
 <template>
-  <div id="menu">
-    メニューです
-  </div>
+  <v-app>
+    <v-navigation-drawer v-model="drawer" app clipped>
+      <v-list dense>
+        <v-list-item link to="/menu/month">
+          <v-list-item-action>
+            <v-icon>mdi-calendar</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>出勤簿・勤務状況</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item link to="/menu/vacationapplication">
+          <v-list-item-action>
+            <v-icon>mdi-palm-tree</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>休暇申請</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item link to="/menu/setting">
+          <v-list-item-action>
+            <v-icon>mdi-cog</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>設定</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+
+    <v-app-bar app clipped-left>
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-toolbar-title>勤怠管理</v-toolbar-title>
+      <v-spacer></v-spacer>
+      XXXさんがログイン中
+    </v-app-bar>
+
+    <v-main>
+      <router-view name="sub" />
+    </v-main>
+
+    <v-footer app>
+      <span>&copy; {{ new Date().getFullYear() }}</span>
+    </v-footer>
+  </v-app>
 </template>
 
 <script>
 export default {
   name: 'menu',
+  props: {
+    userName: String,
+  },
+  data: () => ({
+    drawer: null,
+  }),
+  created() {
+    //this.$vuetify.theme.dark = false;
+  },
 };
 </script>
