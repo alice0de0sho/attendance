@@ -2,7 +2,7 @@
   <v-app>
     <v-card width="700px" class="mx-auto mt-5">
       <v-card-title>
-        <h1 class="display-1">ログイン</h1>
+        <h1 class="display-1">サインイン</h1>
       </v-card-title>
       <v-card-text>
         <v-form>
@@ -15,7 +15,8 @@
             @click:append="showPassword = !showPassword"
           />
           <v-card-actions>
-            <v-btn class="info" @click="login">ログイン</v-btn>
+            <v-btn class="info" to="/menu">サインイン</v-btn>
+            <v-btn text to="/signUp">アカウントを作成</v-btn>
           </v-card-actions>
         </v-form>
       </v-card-text>
@@ -25,16 +26,10 @@
 
 <script>
 export default {
-  name: 'login',
+  name: 'SignIn',
 
   data: () => ({
     showPassword: false,
   }),
-  methods: {
-    // ログインイベント
-    login() {
-      this.$router.push('/menu/month');
-    },
-  },
 };
 </script>

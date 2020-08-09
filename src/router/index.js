@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 //import Home from '../views/Home.vue';
-import Login from '../components/Login.vue';
+import SignIn from '../components/SignIn.vue';
+import SignUp from '../components/SignUp.vue';
 import Menu from '../components/Menu.vue';
 import Month from '../components/Month.vue';
 import Setting from '../components/Setting.vue';
@@ -12,18 +13,26 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: '/',
-    //name: 'Login',
-    component: Login,
+    //name: 'SignIn',
+    component: SignIn,
   },
   {
-    path: '/login',
-    name: 'Login',
-    component: Login,
+    path: '/signIn',
+    name: 'SignIn',
+    component: SignIn,
+  },
+  {
+    path: '/signUp',
+    name: 'SignUp',
+    component: SignUp,
   },
   {
     path: '/menu',
     name: 'Menu',
-    component: Menu,
+    components: {
+      default: Menu,
+      sub: Month,
+    },
     props: true,
     children: [
       {

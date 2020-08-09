@@ -33,7 +33,19 @@
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>勤怠管理</v-toolbar-title>
       <v-spacer></v-spacer>
-      XXXさんがログイン中
+      <v-menu offset-y>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn icon v-bind="attrs" v-on="on">
+            <v-icon>mdi-account-circle</v-icon>
+          </v-btn>
+        </template>
+
+        <v-list>
+          <v-list-item link to="/login">
+            <v-list-item-title>ログアウト</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </v-app-bar>
 
     <v-main>
