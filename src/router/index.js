@@ -1,9 +1,9 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-//import Home from '../views/Home.vue';
 import SignIn from '../components/SignIn.vue';
 import SignUp from '../components/SignUp.vue';
-import Menu from '../components/Menu.vue';
+import BeforeSignInHeader from '../components/BeforeSignInHeader.vue';
+import PostSignInHeader from '../components/PostSignInHeader.vue';
 import Month from '../components/Month.vue';
 import Setting from '../components/Setting.vue';
 import VacationApplication from '../components/VacationApplication.vue';
@@ -14,49 +14,58 @@ const routes = [
   {
     path: '/',
     //name: 'SignIn',
-    component: SignIn,
+    components: {
+      default: SignIn,
+      header: BeforeSignInHeader,
+    },
   },
   {
     path: '/signIn',
     name: 'SignIn',
-    component: SignIn,
+    components: {
+      default: SignIn,
+      header: BeforeSignInHeader,
+    },
   },
   {
     path: '/signUp',
     name: 'SignUp',
-    component: SignUp,
+    components: {
+      default: SignUp,
+      header: BeforeSignInHeader,
+    },
   },
   {
     path: '/menu',
     name: 'Menu',
     components: {
-      default: Menu,
-      sub: Month,
+      default: Month,
+      header: PostSignInHeader,
     },
-    props: true,
-    children: [
-      {
-        path: 'month',
-        name: 'Month',
-        components: {
-          sub: Month,
-        },
-      },
-      {
-        path: 'vacationapplication',
-        name: 'VacationApplication',
-        components: {
-          sub: VacationApplication,
-        },
-      },
-      {
-        path: 'setting',
-        name: 'Setting',
-        components: {
-          sub: Setting,
-        },
-      },
-    ],
+  },
+  {
+    path: '/month',
+    name: 'Month',
+    components: {
+      default: Month,
+      header: PostSignInHeader,
+    },
+  },
+  {
+    path: '/vacationapplication',
+    name: 'VacationApplication',
+    components: {
+      default: VacationApplication,
+      header: PostSignInHeader,
+    },
+  },
+  {
+    path: '/setting',
+    name: 'Setting',
+    components: {
+      default: Setting,
+      header: PostSignInHeader,
+    },
   },
 ];
 

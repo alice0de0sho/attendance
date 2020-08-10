@@ -18,12 +18,7 @@
           </v-toolbar>
         </v-sheet>
         <v-sheet height="600">
-          <v-calendar
-            ref="calendar"
-            v-model="focus"
-            color="primary"
-            :event-color="getEventColor"
-          ></v-calendar>
+          <v-calendar ref="calendar" v-model="focus" color="primary" :event-color="getEventColor"></v-calendar>
         </v-sheet>
       </v-col>
     </v-container>
