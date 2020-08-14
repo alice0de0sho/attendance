@@ -23,10 +23,14 @@
           v-model="focus"
           color="primary"
           :type="type"
-          :now="focus"
+          :now="today"
           :events="events"
           :event-color="getEventColor"
+          @click:date="createEvent"
         ></v-calendar>
+        <div id="form-modal">
+          <create-component ref="form" @save="saveEvent"></create-component>
+        </div>
         <v-menu
           v-model="selectedOpen"
           :close-on-content-click="false"
@@ -53,6 +57,8 @@
 </template>
 
 <script>
+import CreateComponent from './CreateComponent';
+
 export default {
   name: 'month',
   data: () => ({
@@ -71,14 +77,26 @@ export default {
         color: 'blue',
       },
     ],
+    dialog: false,
     //times: [],
     //colors: ['blue', 'indigo', 'deep-purple', 'cyan'],
     //names: ['出社', '休暇', '午前休', '午後休'],
   }),
+  components: {
+    CreateComponent,
+  },
   mounted() {
     this.$refs.calendar.checkChange();
   },
   methods: {
+    createEvent({ date }) {
+      this.$refs.form.open(date);
+    },
+    saveEvent(params) {
+      console.log('calendarcompoennt.xue');
+      this.events.push(params);
+      console.log(`保存しました。${params}`);
+    },
     viewDay() {
       //alert('a');
     },
