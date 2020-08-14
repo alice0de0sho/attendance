@@ -21,6 +21,16 @@
                 <v-chip class="ma-2" label>End</v-chip>
                 <v-time-picker v-model="end" width="252"></v-time-picker>
               </v-col>
+
+              <v-col cols="12" sm="12" md="12">
+                <v-chip class="ma-2" label>Color</v-chip>
+                <v-color-picker
+                  class="ma-2"
+                  :swatches="swatches"
+                  show-swatches
+                  v-model="color"
+                ></v-color-picker>
+              </v-col>
             </v-row>
           </v-container>
         </v-card-text>
@@ -33,9 +43,10 @@
     </v-dialog>
   </v-row>
 </template>
- 
 
 <script>
+import moment from 'moment';
+
 export default {
   data: () => ({
     dialog: false,
@@ -43,6 +54,14 @@ export default {
     end: null,
     date: '',
     name: '',
+    color: '',
+    swatches: [
+      ['#FF0000', '#AA0000', '#550000'],
+      ['#FFFF00', '#AAAA00', '#555500'],
+      ['#00FF00', '#00AA00', '#005500'],
+      ['#00FFFF', '#00AAAA', '#005555'],
+      ['#0000FF', '#0000AA', '#000055'],
+    ],
   }),
   methods: {
     open(date) {
@@ -52,7 +71,16 @@ export default {
       this.start = null;
       this.end = null;
       this.name = '';
-      this.color = 'blue';
+      this.color = '';
+    },
+    openEvent(event) {
+      //console.log(event);
+      this.dialog = true;
+      this.date = event.date;
+      this.start = moment(event.start).format('HH:mm:ss');
+      this.end = moment(event.end).format('HH:mm:ss');
+      this.name = event.name;
+      this.color = event.color;
     },
     save() {
       // 追加
@@ -77,6 +105,7 @@ export default {
 
       // 子→親へ通知する
       this.$emit('save', params);
+      this.dialog = false;
     },
     // 以下を追加
     isNotNull(start, end) {

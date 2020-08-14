@@ -27,6 +27,7 @@
           :events="events"
           :event-color="getEventColor"
           @click:date="createEvent"
+          @click:event="showEvent"
         ></v-calendar>
         <div id="form-modal">
           <create-component ref="form" @save="saveEvent"></create-component>
@@ -72,8 +73,8 @@ export default {
     events: [
       {
         name: 'あたりまえ体操をする',
-        start: '2020-08-10',
-        end: '2020-08-10',
+        start: '2020-08-10 13:00:00',
+        end: '2020-08-10 14:00:00',
         color: 'blue',
       },
     ],
@@ -93,7 +94,7 @@ export default {
       this.$refs.form.open(date);
     },
     saveEvent(params) {
-      console.log('calendarcompoennt.xue');
+      //console.log('calendarcompoennt.xue');
       this.events.push(params);
       console.log(`保存しました。${params}`);
     },
@@ -118,7 +119,10 @@ export default {
       this.focus = date;
       //this.type = 'day';
     },
-    showEvent() {},
+    showEvent({ event }) {
+      //console.log(event);
+      this.$refs.form.openEvent(event);
+    },
     /*showEvent({ nativeEvent, event, time }) {
       console.log(event);
       console.log(nativeEvent);
