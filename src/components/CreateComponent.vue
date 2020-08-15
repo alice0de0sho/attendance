@@ -11,7 +11,7 @@
 
             <v-row>
               <v-col cols="12" sm="12" md="12">
-                <v-select label="区分" :items="items" v-model="name" required></v-select>
+                <v-select label="区分" :items="items" v-model="name" @change="autoInputTime"></v-select>
               </v-col>
               <v-col cols="6" sm="6" md="6">
                 <v-menu
@@ -175,6 +175,13 @@ export default {
         return;
       }
 
+      if (this.color === '') {
+        this.errDisplay = true;
+        this.errMessage = '色を選択してください。';
+        this.resetScrollTop();
+        return;
+      }
+
       const params = {
         name: this.name,
         start: this.date + ' ' + this.start,
@@ -206,6 +213,26 @@ export default {
         return;
       }
       elements[0].scrollTop = 0;
+    },
+    autoInputTime() {
+      switch (this.name) {
+        case '出社':
+          this.start = '09:00:00';
+          this.end = '18:00:00';
+          break;
+        case '午前休':
+          this.start = '14:00:00';
+          this.end = '18:00:00';
+          break;
+        case '午後休':
+          this.start = '09:00:00';
+          this.end = '13:00:00';
+          break;
+        case '全休':
+          this.start = '';
+          this.end = '';
+          break;
+      }
     },
   },
 };

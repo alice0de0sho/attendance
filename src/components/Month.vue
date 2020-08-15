@@ -45,12 +45,13 @@
 
 <script>
 import CreateComponent from './CreateComponent';
+import moment from 'moment';
 
 export default {
   name: 'month',
   data: () => ({
     focus: '',
-    today: `2020-08-10`,
+    today: moment(new Date()).format('YYYY-MM-DD'),
     type: 'month',
     events: [
       {
