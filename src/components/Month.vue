@@ -30,30 +30,16 @@
           @click:event="showEvent"
         ></v-calendar>
         <div id="form-modal">
-          <create-component ref="form" @save="saveEvent"></create-component>
+          <create-component ref="form" @save="saveEvent" :title="compTitle"></create-component>
         </div>
-        <v-menu
-          v-model="selectedOpen"
-          :close-on-content-click="false"
-          :activator="selectedElement"
-          offset-x
-        >
-          <v-card color="grey lighten-4" min-width="350px" flat>
-            <v-toolbar :color="selectedEvent.color" dark>
-              <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
-              <v-spacer></v-spacer>
-            </v-toolbar>
-            <v-card-text>
-              <!-- <span v-html="selectedEvent.details"></span> -->
-              <!-- <span v-html="times"></span> -->
-            </v-card-text>
-            <v-card-actions>
-              <v-btn text color="secondary" @click="selectedOpen = false">閉じる</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-menu>
       </v-sheet>
     </v-col>
+    <v-snackbar v-model="snackbar" color="success" :right="true" :timeout="3000" :top="true">
+      {{ snackbarText }}
+      <template v-slot:action="{ attrs }">
+        <v-btn dark text v-bind="attrs" @click="snackbar = false">閉じる</v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -66,22 +52,20 @@ export default {
     focus: '',
     today: `2020-08-10`,
     type: 'month',
-    selectedEvent: {},
-    selectedTime: {},
-    selectedElement: null,
-    selectedOpen: false,
     events: [
       {
-        name: 'あたりまえ体操をする',
+        name: '午後休',
+        remarks: 'あたりまえ体操をする',
         start: '2020-08-10 13:00:00',
         end: '2020-08-10 14:00:00',
         color: 'blue',
+        date: '2020-08-10',
       },
     ],
     dialog: false,
-    //times: [],
-    //colors: ['blue', 'indigo', 'deep-purple', 'cyan'],
-    //names: ['出社', '休暇', '午前休', '午後休'],
+    snackbar: false,
+    snackbarText: '',
+    compTitle: '',
   }),
   components: {
     CreateComponent,
@@ -91,12 +75,37 @@ export default {
   },
   methods: {
     createEvent({ date }) {
+      this.compTitle = '新規登録';
       this.$refs.form.open(date);
     },
     saveEvent(params) {
-      //console.log('calendarcompoennt.xue');
-      this.events.push(params);
-      console.log(`保存しました。${params}`);
+      // 存在チェック
+      let some = this.events.some(
+        e => e.name === params.name && e.start === params.start && e.end === params.end
+      );
+      console.log(`some: ${some}`); // some: true
+
+      // 勤怠情報配列に存在しない場合
+      if (!some) {
+        let index = this.events.findIndex(e => e.date === params.date);
+        if (index === -1) {
+          // 新規追加
+          this.events.push(params);
+          this.snackbar = true;
+          this.snackbarText = '保存しました。';
+          console.log(`保存しました。`, params);
+        } else {
+          // 更新
+          this.events.splice(index, 1, params);
+          this.snackbar = true;
+          this.snackbarText = '更新しました。';
+          console.log(`保存しました。`, params);
+        }
+      } else {
+        this.snackbar = true;
+        this.snackbarText = '保存しませんでした。';
+        console.log(`保存しませんでした。`, params);
+      }
     },
     viewDay() {
       //alert('a');
@@ -114,75 +123,15 @@ export default {
       this.$refs.calendar.next();
     },
     showDay({ date }) {
-      console.log(date);
+      //console.log(date);
       // 今日の日付に設定する。
       this.focus = date;
       //this.type = 'day';
     },
     showEvent({ event }) {
-      //console.log(event);
+      this.compTitle = '更新';
       this.$refs.form.openEvent(event);
     },
-    /*showEvent({ nativeEvent, event, time }) {
-      console.log(event);
-      console.log(nativeEvent);
-      console.log(time);
-      const open = () => {
-        this.selectedEvent = event;
-        this.selectedElement = nativeEvent.target;
-        this.selectedTime = time;
-        setTimeout(() => (this.selectedOpen = true), 10);
-      };
-
-      if (this.selectedOpen) {
-        this.selectedOpen = false;
-        setTimeout(open, 10);
-      } else {
-        open();
-      }
-
-      nativeEvent.stopPropagation();
-    },
-    updateRange({ start, end }) {
-      const events = [];
-      const times = [];
-      //console.log(start.date);
-      //console.log(end.date);
-
-      const min = new Date(`${start.date}T00:00:00`);
-      const max = new Date(`${end.date}T23:59:59`);
-      const days = (max.getTime() - min.getTime()) / 86400000;
-      //console.log(days);
-      const eventCount = this.rnd(days, days + 20);
-      //console.log(eventCount);
-
-      for (let i = 0; i < eventCount; i++) {
-        const allDay = this.rnd(0, 3) === 0;
-        const firstTimestamp = this.rnd(min.getTime(), max.getTime());
-        const first = new Date(firstTimestamp - (firstTimestamp % 900000));
-        const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000;
-        const second = new Date(first.getTime() + secondTimestamp);
-
-        events.push({
-          name: this.names[this.rnd(0, this.names.length - 1)],
-          start: first,
-          end: second,
-          color: this.colors[this.rnd(0, this.colors.length - 1)],
-          //timed: !allDay,
-        });
-
-        times.push({
-          start: first,
-          end: second,
-        });
-      }
-
-      this.events = events;
-      this.times = times;
-    },
-    rnd(a, b) {
-      return Math.floor((b - a + 1) * Math.random()) + a;
-    },*/
   },
 };
 </script>
