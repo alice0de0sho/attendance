@@ -31,6 +31,7 @@
                       label="出社時刻"
                       prepend-icon="mdi-clock-outline"
                       readonly
+                      :disabled="disabledText"
                       v-bind="attrs"
                       v-on="on"
                     ></v-text-field>
@@ -63,6 +64,7 @@
                       label="退社時刻"
                       prepend-icon="mdi-clock-outline"
                       readonly
+                      :disabled="disabledText"
                       v-bind="attrs"
                       v-on="on"
                     ></v-text-field>
@@ -119,9 +121,8 @@ export default {
     errDisplay: false,
     errMessage: '',
     menuStart: false,
-    //timeStart: null,
     menuEnd: false,
-    //timeEnd: null,
+    disabledText: false,
   }),
   props: {
     title: {
@@ -133,7 +134,6 @@ export default {
     open(date) {
       this.dialog = true;
       this.date = date;
-      // データの初期化処理を行う
       this.start = null;
       this.end = null;
       this.name = '';
@@ -219,18 +219,22 @@ export default {
         case '出社':
           this.start = '09:00:00';
           this.end = '18:00:00';
+          this.disabledText = false;
           break;
         case '午前休':
           this.start = '14:00:00';
           this.end = '18:00:00';
+          this.disabledText = false;
           break;
         case '午後休':
           this.start = '09:00:00';
           this.end = '13:00:00';
+          this.disabledText = false;
           break;
         case '全休':
           this.start = '';
           this.end = '';
+          this.disabledText = true;
           break;
       }
     },

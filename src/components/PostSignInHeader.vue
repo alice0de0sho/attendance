@@ -41,7 +41,7 @@
         </template>
         <v-list>
           <v-list-item link to="/signin">
-            <v-list-item-title>ログアウト</v-list-item-title>
+            <v-list-item-title>サインアウト</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>

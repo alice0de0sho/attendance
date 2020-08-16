@@ -1,20 +1,14 @@
 <template>
   <v-container class="fill-height">
     <v-col>
-      <v-sheet height="64">
-        <v-toolbar flat color="white">
-          <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">Today</v-btn>
-          <v-btn fab text small color="grey darken-2" @click="prev">
-            <v-icon small>mdi-chevron-left</v-icon>
-          </v-btn>
-          <v-btn fab text small color="grey darken-2" @click="next">
-            <v-icon small>mdi-chevron-right</v-icon>
-          </v-btn>
-          <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">出勤</v-btn>
-          <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">退勤</v-btn>
-          <!-- <v-toolbar-title v-if="$refs.calendar">{{ $refs.calendar.title }}</v-toolbar-title> -->
-          <v-spacer></v-spacer>
-        </v-toolbar>
+      <v-sheet height="40" color="grey lighten-3" class="d-flex">
+        <v-btn icon color="blue" @click="$refs.calendar.prev()">
+          <v-icon dark>mdi-chevron-left</v-icon>
+        </v-btn>
+        <v-spacer></v-spacer>
+        <v-btn icon color="blue" @click="$refs.calendar.next()">
+          <v-icon dark>mdi-chevron-right</v-icon>
+        </v-btn>
       </v-sheet>
       <v-sheet height="600">
         <v-calendar
@@ -22,6 +16,8 @@
           locale="ja-jp"
           v-model="focus"
           color="primary"
+          :day-format="timestamp => new Date(timestamp.date).getDate()"
+          :month-format="timestamp => (new Date(timestamp.date).getMonth() + 1) + ' /'"
           :type="type"
           :now="today"
           :events="events"
