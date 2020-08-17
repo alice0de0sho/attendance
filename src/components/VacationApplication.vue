@@ -2,12 +2,23 @@
   <v-container>
     <v-row>
       <v-col cols="10">
-        <v-data-table :headers="headers" :items="items" sort-by="holiday" class="elevation-1">
+        <v-data-table
+          v-model="selected"
+          :headers="headers"
+          :items="items"
+          item-key="name"
+          sort-by="holiday"
+          show-select
+          class="elevation-1"
+        >
           <template v-slot:top>
             <v-toolbar flat color="white">
               <v-toolbar-title>休暇申請</v-toolbar-title>
               <v-divider class="mx-4" inset vertical></v-divider>
               <v-spacer></v-spacer>
+              <v-divider class="mx-4" inset vertical></v-divider>
+              <v-btn color="primary" dark class="mb-2" @click="apply">申請</v-btn>
+              <v-divider class="mx-4" inset vertical></v-divider>
               <v-dialog v-model="dialog" max-width="500px">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">新規作成</v-btn>
@@ -21,16 +32,22 @@
                     <v-container>
                       <v-row>
                         <v-col cols="12" sm="6" md="4">
-                          <v-text-field v-model="editedItem.name" label="区分"></v-text-field>
+                          <v-select :items="kbns" v-model="editedItem.name" label="区分"></v-select>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
                           <v-text-field v-model="editedItem.holiday" label="休暇日"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                          <v-text-field v-model="editedItem.startTime" label="開始時刻"></v-text-field>
+                          <v-text-field
+                            v-model="editedItem.startTime"
+                            label="開始時刻"
+                          ></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                          <v-text-field v-model="editedItem.endTime" label="終了時刻"></v-text-field>
+                          <v-text-field
+                            v-model="editedItem.endTime"
+                            label="終了時刻"
+                          ></v-text-field>
                         </v-col>
                       </v-row>
                     </v-container>
@@ -62,6 +79,7 @@
 export default {
   data: () => ({
     dialog: false,
+    selected: [],
     headers: [
       { text: '区分', align: 'center', sortable: false, value: 'name' },
       { text: '休暇日', align: 'center', sortable: true, value: 'holiday' },
@@ -70,6 +88,7 @@ export default {
       { text: '操作', align: 'center', sortable: false, value: 'actions' },
     ],
     items: [],
+    kbns: ['出社', '全休', '午前休', '午後休'],
     editedIndex: -1,
     editedItem: {
       name: '',
@@ -78,6 +97,12 @@ export default {
       endTime: '',
     },
     defaultItem: {
+      name: '',
+      holiday: '',
+      startTime: '',
+      endTime: '',
+    },
+    applyItems: {
       name: '',
       holiday: '',
       startTime: '',
@@ -157,11 +182,28 @@ export default {
 
     save() {
       if (this.editedIndex > -1) {
-        Object.assign(this.items[this.editedIndex], this.editedItem);
+        //Object.assign(this.items[this.editedIndex], this.editedItem);
+        this.items.splice(this.editedIndex, 1, this.editedItem);
       } else {
         this.items.push(this.editedItem);
       }
       this.close();
+    },
+
+    apply() {
+      if (confirm('選択した休暇を申請してよろしいですか？')) {
+        // 選択した要素を申請配列にコピー
+        this.applyItems = this.selected.concat();
+
+        // 選択した要素をitems配列から削除
+        this.selected.forEach(element => {
+          this.items.forEach((element2, index) => {
+            if (element.holiday === element2.holiday) {
+              this.items.splice(index, 1);
+            }
+          });
+        });
+      }
     },
   },
 };
