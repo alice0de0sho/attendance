@@ -6,7 +6,7 @@
           v-model="selected"
           :headers="headers"
           :items="items"
-          item-key="name"
+          item-key="holiday"
           sort-by="holiday"
           show-select
           class="elevation-1"
@@ -32,22 +32,104 @@
                     <v-container>
                       <v-row>
                         <v-col cols="12" sm="6" md="4">
-                          <v-select :items="kbns" v-model="editedItem.name" label="区分"></v-select>
+                          <v-select
+                            label="区分"
+                            :items="kbns"
+                            v-model="editedItem.name"
+                            @change="autoInputTime"
+                          ></v-select>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                          <v-text-field v-model="editedItem.holiday" label="休暇日"></v-text-field>
+                          <v-menu
+                            v-model="menuDate"
+                            :close-on-content-click="false"
+                            :nudge-right="40"
+                            transition="scale-transition"
+                            offset-y
+                            min-width="290px"
+                          >
+                            <template v-slot:activator="{ on }">
+                              <v-text-field
+                                v-model="editedItem.holiday"
+                                label="休暇日"
+                                prepend-icon="mdi-calendar"
+                                readonly
+                                v-on="on"
+                              ></v-text-field>
+                            </template>
+                            <v-date-picker
+                              v-model="editedItem.holiday"
+                              @input="menuDate = false"
+                              :day-format="date => new Date(date).getDate()"
+                            ></v-date-picker>
+                          </v-menu>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                          <v-text-field
-                            v-model="editedItem.startTime"
-                            label="開始時刻"
-                          ></v-text-field>
+                          <v-menu
+                            ref="menu2"
+                            v-model="menuStart"
+                            :close-on-content-click="false"
+                            :nudge-right="40"
+                            :return-value.sync="editedItem.startTime"
+                            transition="scale-transition"
+                            offset-y
+                            max-width="290px"
+                            min-width="290px"
+                          >
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-text-field
+                                v-model="editedItem.startTime"
+                                label="開始時刻"
+                                prepend-icon="mdi-clock-outline"
+                                readonly
+                                :disabled="disabledText"
+                                v-bind="attrs"
+                                v-on="on"
+                              ></v-text-field>
+                            </template>
+                            <v-time-picker
+                              v-if="menuStart"
+                              v-model="editedItem.startTime"
+                              full-width
+                              @click:minute="$refs.menu2.save(editedItem.startTime)"
+                              format="24hr"
+                            ></v-time-picker>
+                          </v-menu>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                          <v-text-field
-                            v-model="editedItem.endTime"
-                            label="終了時刻"
-                          ></v-text-field>
+                          <v-menu
+                            ref="menu3"
+                            v-model="menuEnd"
+                            :close-on-content-click="false"
+                            :nudge-right="40"
+                            :return-value.sync="editedItem.endTime"
+                            transition="scale-transition"
+                            offset-y
+                            max-width="290px"
+                            min-width="290px"
+                          >
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-text-field
+                                v-model="editedItem.endTime"
+                                label="終了時刻"
+                                prepend-icon="mdi-clock-outline"
+                                readonly
+                                :disabled="disabledText"
+                                v-bind="attrs"
+                                v-on="on"
+                              ></v-text-field>
+                            </template>
+                            <v-time-picker
+                              v-if="menuEnd"
+                              v-model="editedItem.endTime"
+                              full-width
+                              @click:minute="$refs.menu3.save(editedItem.endTime)"
+                              format="24hr"
+                            ></v-time-picker>
+                          </v-menu>
+                        </v-col>
+                        <v-col cols="16" sm="10" md="8">
+                          <v-text-field v-model="editedItem.remarks" label="備考"></v-text-field>
                         </v-col>
                       </v-row>
                     </v-container>
@@ -76,6 +158,8 @@
 </template>
 
 <script>
+//import moment from 'moment';
+
 export default {
   data: () => ({
     dialog: false,
@@ -85,29 +169,38 @@ export default {
       { text: '休暇日', align: 'center', sortable: true, value: 'holiday' },
       { text: '開始時刻', align: 'center', sortable: false, value: 'startTime' },
       { text: '終了時刻', align: 'center', sortable: false, value: 'endTime' },
+      { text: '備考', align: 'center', sortable: false, value: 'remarks' },
       { text: '操作', align: 'center', sortable: false, value: 'actions' },
     ],
     items: [],
-    kbns: ['出社', '全休', '午前休', '午後休'],
+    kbns: ['全休', '午前休', '午後休'],
     editedIndex: -1,
     editedItem: {
       name: '',
       holiday: '',
       startTime: '',
       endTime: '',
+      remarks: '',
     },
     defaultItem: {
       name: '',
       holiday: '',
       startTime: '',
       endTime: '',
+      remarks: '',
     },
     applyItems: {
       name: '',
       holiday: '',
       startTime: '',
       endTime: '',
+      remarks: '',
     },
+    menu: false,
+    menuDate: false,
+    menuStart: false,
+    menuEnd: false,
+    disabledText: false,
   }),
 
   computed: {
@@ -131,21 +224,24 @@ export default {
       this.items = [
         {
           name: '全休',
-          holiday: '2020/08/14',
-          startTime: '09:00:00',
-          endTime: '18:00:00',
+          holiday: '2020-08-14',
+          startTime: '09:00',
+          endTime: '18:00',
+          remarks: '備考1',
         },
         {
           name: '午前休',
-          holiday: '2020/08/18',
-          startTime: '09:00:00',
-          endTime: '14:00:00',
+          holiday: '2020-08-18',
+          startTime: '09:00',
+          endTime: '14:00',
+          remarks: '備考2',
         },
         {
           name: '午後休',
-          holiday: '2020/08/28',
-          startTime: '13:00:00',
-          endTime: '18:00:00',
+          holiday: '2020-08-28',
+          startTime: '13:00',
+          endTime: '18:00',
+          remarks: '備考3',
         },
       ];
     },
@@ -203,6 +299,29 @@ export default {
             }
           });
         });
+      }
+    },
+
+    /*formatHoliday() {
+      if (this.editedItem.holiday !== '') {
+        this.editedItem.holiday = moment(this.editedItem.holiday).format('YYYY/MM/DD');
+      }
+    },*/
+
+    autoInputTime() {
+      switch (this.editedItem.name) {
+        case '午前休':
+          this.editedItem.startTime = '09:00';
+          this.editedItem.endTime = '13:00';
+          break;
+        case '午後休':
+          this.editedItem.startTime = '14:00';
+          this.editedItem.endTime = '18:00';
+          break;
+        case '全休':
+          this.editedItem.startTime = '09:00';
+          this.editedItem.endTime = '18:00';
+          break;
       }
     },
   },

@@ -3,15 +3,20 @@
     <v-dialog v-model="dialog" max-width="600px" persistent>
       <v-card>
         <v-card-title>
-          <span class="headline">{{title}}</span>
+          <span class="headline">{{ title }}</span>
         </v-card-title>
         <v-card-text id="scroll-target">
           <v-container>
-            <v-alert type="error" v-model="errDisplay">{{errMessage}}</v-alert>
+            <v-alert type="error" v-model="errDisplay">{{ errMessage }}</v-alert>
 
             <v-row>
               <v-col cols="12" sm="12" md="12">
-                <v-select label="区分" :items="items" v-model="name" @change="autoInputTime"></v-select>
+                <v-select
+                  label="区分"
+                  :items="items"
+                  v-model="name"
+                  @change="autoInputTime"
+                ></v-select>
               </v-col>
               <v-col cols="6" sm="6" md="6">
                 <v-menu
@@ -97,7 +102,15 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="dialog = false; resetScrollTop()">閉じる</v-btn>
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="
+              dialog = false;
+              resetScrollTop();
+            "
+            >閉じる</v-btn
+          >
           <v-btn color="blue darken-1" text @click="save">保存</v-btn>
         </v-card-actions>
       </v-card>
@@ -145,8 +158,8 @@ export default {
     openEvent(event) {
       this.dialog = true;
       this.date = event.date;
-      this.start = moment(event.start).format('HH:mm:ss');
-      this.end = moment(event.end).format('HH:mm:ss');
+      this.start = moment(event.start).format('HH:mm');
+      this.end = moment(event.end).format('HH:mm');
       this.name = event.name;
       this.color = event.color;
       this.remarks = event.remarks;
@@ -217,18 +230,18 @@ export default {
     autoInputTime() {
       switch (this.name) {
         case '出社':
-          this.start = '09:00:00';
-          this.end = '18:00:00';
+          this.start = '09:00';
+          this.end = '18:00';
           this.disabledText = false;
           break;
         case '午前休':
-          this.start = '14:00:00';
-          this.end = '18:00:00';
+          this.start = '14:00';
+          this.end = '18:00';
           this.disabledText = false;
           break;
         case '午後休':
-          this.start = '09:00:00';
-          this.end = '13:00:00';
+          this.start = '09:00';
+          this.end = '13:00';
           this.disabledText = false;
           break;
         case '全休':
