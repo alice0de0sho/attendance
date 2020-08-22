@@ -24,6 +24,9 @@
 </template>
 
 <script>
+/**
+ * サインアップコンポーネント
+ */
 export default {
   name: 'SignUp',
 

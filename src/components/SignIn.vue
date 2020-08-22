@@ -25,6 +25,9 @@
 </template>
 
 <script>
+/**
+ * サインインコンポーネント
+ */
 export default {
   name: 'SignIn',
 

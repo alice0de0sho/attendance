@@ -6,6 +6,9 @@
 </template>
 
 <script>
+/**
+ * サインイン前ヘッダーコンポーネント
+ */
 export default {
   name: 'header1',
 };

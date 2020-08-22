@@ -158,6 +158,9 @@
 </template>
 
 <script>
+/**
+ * 休暇申請コンポーネント
+ */
 //import moment from 'moment';
 
 export default {
@@ -204,22 +207,36 @@ export default {
   }),
 
   computed: {
+    /**
+     * @description
+     * @returns {any}
+     */
     formTitle() {
       return this.editedIndex === -1 ? '新規作成' : '更新';
     },
   },
 
   watch: {
+    /**
+     * @description
+     * @param {any} val
+     */
     dialog(val) {
       val || this.close();
     },
   },
 
+  /**
+   * @description
+   */
   created() {
     this.initialize();
   },
 
   methods: {
+    /**
+     * @description 初期化処理
+     */
     initialize() {
       this.items = [
         {
@@ -246,12 +263,20 @@ export default {
       ];
     },
 
+    /**
+     * @description 一覧の休暇申請を1行更新
+     * @param {any} item
+     */
     editItem(item) {
       this.editedIndex = this.items.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
 
+    /**
+     * @description 一覧の休暇申請を1行削除
+     * @param {any} item
+     */
     deleteItem(item) {
       const index = this.items.indexOf(item);
       confirm(
@@ -268,6 +293,9 @@ export default {
       ) && this.items.splice(index, 1);
     },
 
+    /**
+     * @description 休暇申請ダイアログを閉じる
+     */
     close() {
       this.dialog = false;
       this.$nextTick(() => {
@@ -276,6 +304,9 @@ export default {
       });
     },
 
+    /**
+     * @description 休暇申請ダイアログの内容を保存
+     */
     save() {
       if (this.editedIndex > -1) {
         //Object.assign(this.items[this.editedIndex], this.editedItem);
@@ -286,6 +317,9 @@ export default {
       this.close();
     },
 
+    /**
+     * @description 休暇申請実施
+     */
     apply() {
       if (confirm('選択した休暇を申請してよろしいですか？')) {
         // 選択した要素を申請配列にコピー
@@ -302,12 +336,9 @@ export default {
       }
     },
 
-    /*formatHoliday() {
-      if (this.editedItem.holiday !== '') {
-        this.editedItem.holiday = moment(this.editedItem.holiday).format('YYYY/MM/DD');
-      }
-    },*/
-
+    /**
+     * @description 選択した区分により、開始/終了時刻を自動補完
+     */
     autoInputTime() {
       switch (this.editedItem.name) {
         case '午前休':

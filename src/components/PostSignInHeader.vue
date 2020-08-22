@@ -7,7 +7,7 @@
             <v-icon>mdi-calendar</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>出勤簿・勤務状況</v-list-item-title>
+            <v-list-item-title>勤務状況</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <v-list-item link to="/vacationapplication">
@@ -50,6 +50,9 @@
 </template>
 
 <script>
+/**
+ * サインイン後ヘッダーコンポーネント
+ */
 export default {
   name: 'header2',
   data: () => ({

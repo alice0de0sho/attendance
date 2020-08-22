@@ -40,6 +40,9 @@
 </template>
 
 <script>
+/**
+ * 勤怠状況コンポーネント
+ */
 import CreateComponent from './CreateComponent';
 import moment from 'moment';
 
@@ -67,14 +70,30 @@ export default {
   components: {
     CreateComponent,
   },
-  mounted() {
-    this.$refs.calendar.checkChange();
-  },
+
   methods: {
+    /**
+     * @description 勤怠状況を新規登録
+     * @param {any} { date }
+     */
     createEvent({ date }) {
       this.compTitle = '新規登録';
       this.$refs.form.open(date);
     },
+
+    /**
+     * @description 勤怠状況を更新
+     * @param {any} { event }
+     */
+    showEvent({ event }) {
+      this.compTitle = '更新';
+      this.$refs.form.openEvent(event);
+    },
+
+    /**
+     * @description 勤怠状況をカレンダーに反映
+     * @param {any} params
+     */
     saveEvent(params) {
       // 存在チェック
       let some = this.events.some(
@@ -104,30 +123,28 @@ export default {
         console.log(`保存しませんでした。`, params);
       }
     },
-    viewDay() {
-      //alert('a');
-    },
+
+    /**
+     * @description 勤怠状況の色取得
+     * @param {any} event
+     * @returns {any}
+     */
     getEventColor(event) {
       return event.color;
     },
-    setToday() {
-      this.focus = '';
-    },
+
+    /**
+     * @description カレンダーを前月へ
+     */
     prev() {
       this.$refs.calendar.prev();
     },
+
+    /**
+     * @description  カレンダーを次月へ
+     */
     next() {
       this.$refs.calendar.next();
-    },
-    showDay({ date }) {
-      //console.log(date);
-      // 今日の日付に設定する。
-      this.focus = date;
-      //this.type = 'day';
-    },
-    showEvent({ event }) {
-      this.compTitle = '更新';
-      this.$refs.form.openEvent(event);
     },
   },
 };

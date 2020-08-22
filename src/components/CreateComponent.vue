@@ -11,12 +11,7 @@
 
             <v-row>
               <v-col cols="12" sm="12" md="12">
-                <v-select
-                  label="区分"
-                  :items="items"
-                  v-model="name"
-                  @change="autoInputTime"
-                ></v-select>
+                <v-select label="区分" :items="items" v-model="name" @change="autoInputTime"></v-select>
               </v-col>
               <v-col cols="6" sm="6" md="6">
                 <v-menu
@@ -109,8 +104,7 @@
               dialog = false;
               resetScrollTop();
             "
-            >閉じる</v-btn
-          >
+          >閉じる</v-btn>
           <v-btn color="blue darken-1" text @click="save">保存</v-btn>
         </v-card-actions>
       </v-card>
@@ -119,6 +113,9 @@
 </template>
 
 <script>
+/**
+ * 勤怠状況作成/更新コンポーネント
+ */
 import moment from 'moment';
 
 export default {
@@ -144,6 +141,10 @@ export default {
     },
   },
   methods: {
+    /**
+     * @description 勤務状況画面から本画面を開く時の処理（新規登録）
+     * @param {any} date
+     */
     open(date) {
       this.dialog = true;
       this.date = date;
@@ -155,6 +156,11 @@ export default {
       this.errDisplay = false;
       this.errMessage = '';
     },
+
+    /**
+     * @description 勤務状況画面から本画面を開く時の処理（更新）
+     * @param {any} event
+     */
     openEvent(event) {
       this.dialog = true;
       this.date = event.date;
@@ -166,32 +172,34 @@ export default {
       this.errDisplay = false;
       this.errMessage = '';
     },
+
+    /**
+     * @description 勤怠状況の保存処理
+     */
     save() {
+      this.resetScrollTop();
+
       if (this.name === '') {
         this.errDisplay = true;
         this.errMessage = '区分を入力してください。';
-        this.resetScrollTop();
         return;
       }
 
       if (!this.isNotNull(this.start, this.end)) {
         this.errDisplay = true;
         this.errMessage = '時刻を入力してください。';
-        this.resetScrollTop();
         return;
       }
 
       if (!this.compareDate(this.start, this.end)) {
         this.errDisplay = true;
         this.errMessage = '終了時刻を開始時刻の後にしてください。';
-        this.resetScrollTop();
         return;
       }
 
       if (this.color === '') {
         this.errDisplay = true;
         this.errMessage = '色を選択してください。';
-        this.resetScrollTop();
         return;
       }
 
@@ -211,14 +219,31 @@ export default {
       this.dialog = false;
       this.errDisplay = false;
       this.errMessage = '';
-      this.resetScrollTop();
     },
+
+    /**
+     * @description 開始/終了時刻の必須チェック
+     * @param {any} start
+     * @param {any} end
+     * @returns {any}
+     */
     isNotNull(start, end) {
       return start && end;
     },
+
+    /**
+     * @description 開始/終了時刻の比較チェック
+     * @param {any} start
+     * @param {any} end
+     * @returns {any}
+     */
     compareDate(start, end) {
       return start < end;
     },
+
+    /**
+     * @description 保存時にスクロール状態を初期化
+     */
     resetScrollTop() {
       let elements = document.getElementsByClassName('v-dialog--active');
       if (!elements || !elements.length) {
@@ -227,6 +252,10 @@ export default {
       }
       elements[0].scrollTop = 0;
     },
+
+    /**
+     * @description 選択した区分により、開始/終了時刻を自動補完
+     */
     autoInputTime() {
       switch (this.name) {
         case '出社':
