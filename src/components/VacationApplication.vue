@@ -208,7 +208,7 @@ export default {
 
   computed: {
     /**
-     * @description
+     * @description タイトル設定
      * @returns {any}
      */
     formTitle() {
@@ -227,7 +227,7 @@ export default {
   },
 
   /**
-   * @description
+   * @description 初期化処理の呼び出し（DOM生成前）
    */
   created() {
     this.initialize();
