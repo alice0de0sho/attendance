@@ -14,15 +14,15 @@
           <template v-slot:top>
             <v-toolbar flat color="white">
               <v-toolbar-title>休暇申請</v-toolbar-title>
-              <v-divider class="mx-4" inset vertical></v-divider>
+              <!-- <v-divider class="mx-4" inset vertical></v-divider> -->
               <v-spacer></v-spacer>
-              <v-divider class="mx-4" inset vertical></v-divider>
+              <!-- <v-divider class="mx-4" inset vertical></v-divider> -->
               <v-btn color="primary" dark class="mb-2" @click="apply">申請</v-btn>
-              <v-divider class="mx-4" inset vertical></v-divider>
+              <!-- <v-divider class="mx-4" inset vertical></v-divider> -->
               <v-dialog v-model="dialog" max-width="500px">
-                <template v-slot:activator="{ on, attrs }">
+                <!-- <template v-slot:activator="{ on, attrs }">
                   <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">新規作成</v-btn>
-                </template>
+                </template> -->
                 <v-card>
                   <v-card-title>
                     <span class="headline">{{ formTitle }}</span>
@@ -224,9 +224,6 @@ export default {
   /**
    * @description 初期化処理の呼び出し（DOM生成前）
    */
-  /*   created() {
-    this.initialize();
-  }, */
   mounted() {
     this.initialize();
   },
@@ -308,6 +305,7 @@ export default {
      * @description 休暇申請実施
      */
     apply() {
+      if (this.selected.length === 0) return;
       if (confirm('選択した休暇を申請してよろしいですか？')) {
         this.applyHoliday({
           selected: this.selected,
