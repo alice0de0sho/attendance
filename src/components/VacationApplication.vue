@@ -238,7 +238,7 @@ export default {
      * @description 初期化処理
      */
     initialize() {
-      this.items = this.events.filter(function(item) {
+      this.items = store.state.events.filter(function(item) {
         if (item.name.indexOf('出社') !== 0) {
           if (store.state.applyHolidayItems.length === 0) {
             return true;
