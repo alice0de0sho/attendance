@@ -17,14 +17,20 @@
           v-model="focus"
           color="primary"
           :day-format="timestamp => new Date(timestamp.date).getDate()"
-          :month-format="timestamp => (new Date(timestamp.date).getMonth() + 1) + ' /'"
+          :month-format="timestamp => new Date(timestamp.date).getMonth() + 1 + ' /'"
           :type="type"
           :now="today"
           :events="events"
           :event-color="getEventColor"
           @click:date="createEvent"
           @click:event="showEvent"
-        ></v-calendar>
+        >
+          <template v-slot:event="props">
+            <div class="pl-1">
+              {{ props.event.name }}
+            </div>
+          </template></v-calendar
+        >
         <div id="form-modal">
           <create-component ref="form" @save="saveEvent" :title="compTitle"></create-component>
         </div>
@@ -45,6 +51,7 @@
  */
 import CreateComponent from './CreateComponent';
 import moment from 'moment';
+import { mapState, mapMutations } from 'vuex';
 
 export default {
   name: 'month',
@@ -52,26 +59,23 @@ export default {
     focus: '',
     today: moment(new Date()).format('YYYY-MM-DD'),
     type: 'month',
-    events: [
-      {
-        name: '午後休',
-        remarks: 'あたりまえ体操をする',
-        start: '2020-08-10 13:00:00',
-        end: '2020-08-10 14:00:00',
-        color: 'blue',
-        date: '2020-08-10',
-      },
-    ],
     dialog: false,
     snackbar: false,
     snackbarText: '',
     compTitle: '',
   }),
+
+  computed: {
+    ...mapState(['events']),
+  },
+
   components: {
     CreateComponent,
   },
 
   methods: {
+    ...mapMutations(['createEvents', 'updateEvents']),
+
     /**
      * @description 勤怠状況を新規登録
      * @param {any} { date }
@@ -97,7 +101,11 @@ export default {
     saveEvent(params) {
       // 存在チェック
       let some = this.events.some(
-        e => e.name === params.name && e.start === params.start && e.end === params.end
+        e =>
+          e.name === params.name &&
+          e.date === params.date &&
+          e.start === params.start &&
+          e.end === params.end
       );
       console.log(`some: ${some}`); // some: true
 
@@ -106,13 +114,18 @@ export default {
         let index = this.events.findIndex(e => e.date === params.date);
         if (index === -1) {
           // 新規追加
-          this.events.push(params);
+          this.createEvents({
+            params: params,
+          });
           this.snackbar = true;
           this.snackbarText = '保存しました。';
           console.log(`保存しました。`, params);
         } else {
           // 更新
-          this.events.splice(index, 1, params);
+          this.updateEvents({
+            index: index,
+            params: params,
+          });
           this.snackbar = true;
           this.snackbarText = '更新しました。';
           console.log(`保存しました。`, params);

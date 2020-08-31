@@ -11,7 +11,12 @@
 
             <v-row>
               <v-col cols="12" sm="12" md="12">
-                <v-select label="区分" :items="items" v-model="name" @change="autoInputTime"></v-select>
+                <v-select
+                  label="区分"
+                  :items="items"
+                  v-model="name"
+                  @change="autoInputTime"
+                ></v-select>
               </v-col>
               <v-col cols="6" sm="6" md="6">
                 <v-menu
@@ -104,7 +109,8 @@
               dialog = false;
               resetScrollTop();
             "
-          >閉じる</v-btn>
+            >閉じる</v-btn
+          >
           <v-btn color="blue darken-1" text @click="save">保存</v-btn>
         </v-card-actions>
       </v-card>
@@ -133,6 +139,8 @@ export default {
     menuStart: false,
     menuEnd: false,
     disabledText: false,
+    breakStartTime: null,
+    breakEndTime: null,
   }),
   props: {
     title: {
@@ -164,8 +172,15 @@ export default {
     openEvent(event) {
       this.dialog = true;
       this.date = event.date;
-      this.start = moment(event.start).format('HH:mm');
-      this.end = moment(event.end).format('HH:mm');
+      if (event.name !== '全休') {
+        this.start = moment(event.start).format('HH:mm');
+        this.end = moment(event.end).format('HH:mm');
+        this.disabledText = false;
+      } else {
+        this.start = null;
+        this.end = null;
+        this.disabledText = true;
+      }
       this.name = event.name;
       this.color = event.color;
       this.remarks = event.remarks;
@@ -185,13 +200,13 @@ export default {
         return;
       }
 
-      if (!this.isNotNull(this.start, this.end)) {
+      if (this.name !== '全休' && !this.isNotNull(this.start, this.end)) {
         this.errDisplay = true;
         this.errMessage = '時刻を入力してください。';
         return;
       }
 
-      if (!this.compareDate(this.start, this.end)) {
+      if (this.name !== '全休' && !this.compareDate(this.start, this.end)) {
         this.errDisplay = true;
         this.errMessage = '終了時刻を開始時刻の後にしてください。';
         return;
@@ -203,6 +218,26 @@ export default {
         return;
       }
 
+      if (this.name === '全休') {
+        this.start = '00:00';
+        this.end = '00:00';
+      }
+
+      switch (this.name) {
+        case '午前休':
+          this.breakStartTime = '09:00';
+          this.breakEndTime = '13:00';
+          break;
+        case '午後休':
+          this.breakStartTime = '14:00';
+          this.breakEndTime = '18:00';
+          break;
+        case '全休':
+          this.breakStartTime = '09:00';
+          this.breakEndTime = '18:00';
+          break;
+      }
+
       const params = {
         name: this.name,
         start: this.date + ' ' + this.start,
@@ -210,6 +245,8 @@ export default {
         color: this.color,
         remarks: this.remarks,
         date: this.date,
+        breakStartTime: this.breakStartTime,
+        breakEndTime: this.breakEndTime,
       };
 
       console.log(params);

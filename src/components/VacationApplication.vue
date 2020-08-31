@@ -6,8 +6,8 @@
           v-model="selected"
           :headers="headers"
           :items="items"
-          item-key="holiday"
-          sort-by="holiday"
+          item-key="date"
+          sort-by="date"
           show-select
           class="elevation-1"
         >
@@ -50,7 +50,7 @@
                           >
                             <template v-slot:activator="{ on }">
                               <v-text-field
-                                v-model="editedItem.holiday"
+                                v-model="editedItem.date"
                                 label="休暇日"
                                 prepend-icon="mdi-calendar"
                                 readonly
@@ -58,7 +58,7 @@
                               ></v-text-field>
                             </template>
                             <v-date-picker
-                              v-model="editedItem.holiday"
+                              v-model="editedItem.date"
                               @input="menuDate = false"
                               :day-format="date => new Date(date).getDate()"
                             ></v-date-picker>
@@ -70,7 +70,7 @@
                             v-model="menuStart"
                             :close-on-content-click="false"
                             :nudge-right="40"
-                            :return-value.sync="editedItem.startTime"
+                            :return-value.sync="editedItem.breakStartTime"
                             transition="scale-transition"
                             offset-y
                             max-width="290px"
@@ -78,7 +78,7 @@
                           >
                             <template v-slot:activator="{ on, attrs }">
                               <v-text-field
-                                v-model="editedItem.startTime"
+                                v-model="editedItem.breakStartTime"
                                 label="開始時刻"
                                 prepend-icon="mdi-clock-outline"
                                 readonly
@@ -89,9 +89,9 @@
                             </template>
                             <v-time-picker
                               v-if="menuStart"
-                              v-model="editedItem.startTime"
+                              v-model="editedItem.breakStartTime"
                               full-width
-                              @click:minute="$refs.menu2.save(editedItem.startTime)"
+                              @click:minute="$refs.menu2.save(editedItem.breakStartTime)"
                               format="24hr"
                             ></v-time-picker>
                           </v-menu>
@@ -102,7 +102,7 @@
                             v-model="menuEnd"
                             :close-on-content-click="false"
                             :nudge-right="40"
-                            :return-value.sync="editedItem.endTime"
+                            :return-value.sync="editedItem.breakEndTime"
                             transition="scale-transition"
                             offset-y
                             max-width="290px"
@@ -110,7 +110,7 @@
                           >
                             <template v-slot:activator="{ on, attrs }">
                               <v-text-field
-                                v-model="editedItem.endTime"
+                                v-model="editedItem.breakEndTime"
                                 label="終了時刻"
                                 prepend-icon="mdi-clock-outline"
                                 readonly
@@ -121,9 +121,9 @@
                             </template>
                             <v-time-picker
                               v-if="menuEnd"
-                              v-model="editedItem.endTime"
+                              v-model="editedItem.breakEndTime"
                               full-width
-                              @click:minute="$refs.menu3.save(editedItem.endTime)"
+                              @click:minute="$refs.menu3.save(editedItem.breakEndTime)"
                               format="24hr"
                             ></v-time-picker>
                           </v-menu>
@@ -149,7 +149,7 @@
             <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
           </template>
           <template v-slot:no-data>
-            <v-btn color="primary" @click="initialize">Reset</v-btn>
+            申請する休暇情報はありません。
           </template>
         </v-data-table>
       </v-col>
@@ -161,7 +161,8 @@
 /**
  * 休暇申請コンポーネント
  */
-//import moment from 'moment';
+import { mapMutations } from 'vuex';
+import store from '../store';
 
 export default {
   data: () => ({
@@ -169,9 +170,9 @@ export default {
     selected: [],
     headers: [
       { text: '区分', align: 'center', sortable: false, value: 'name' },
-      { text: '休暇日', align: 'center', sortable: true, value: 'holiday' },
-      { text: '開始時刻', align: 'center', sortable: false, value: 'startTime' },
-      { text: '終了時刻', align: 'center', sortable: false, value: 'endTime' },
+      { text: '休暇日', align: 'center', sortable: true, value: 'date' },
+      { text: '開始時刻', align: 'center', sortable: false, value: 'breakStartTime' },
+      { text: '終了時刻', align: 'center', sortable: false, value: 'breakEndTime' },
       { text: '備考', align: 'center', sortable: false, value: 'remarks' },
       { text: '操作', align: 'center', sortable: false, value: 'actions' },
     ],
@@ -180,25 +181,19 @@ export default {
     editedIndex: -1,
     editedItem: {
       name: '',
-      holiday: '',
-      startTime: '',
-      endTime: '',
+      date: '',
+      breakStartTime: '',
+      breakEndTime: '',
       remarks: '',
     },
     defaultItem: {
       name: '',
-      holiday: '',
-      startTime: '',
-      endTime: '',
+      date: '',
+      breakStartTime: '',
+      breakEndTime: '',
       remarks: '',
     },
-    applyItems: {
-      name: '',
-      holiday: '',
-      startTime: '',
-      endTime: '',
-      remarks: '',
-    },
+    applyItems: [],
     menu: false,
     menuDate: false,
     menuStart: false,
@@ -229,38 +224,31 @@ export default {
   /**
    * @description 初期化処理の呼び出し（DOM生成前）
    */
-  created() {
+  /*   created() {
+    this.initialize();
+  }, */
+  mounted() {
     this.initialize();
   },
 
   methods: {
+    ...mapMutations(['applyHoliday']),
+
     /**
      * @description 初期化処理
      */
     initialize() {
-      this.items = [
-        {
-          name: '全休',
-          holiday: '2020-08-14',
-          startTime: '09:00',
-          endTime: '18:00',
-          remarks: '備考1',
-        },
-        {
-          name: '午前休',
-          holiday: '2020-08-18',
-          startTime: '09:00',
-          endTime: '14:00',
-          remarks: '備考2',
-        },
-        {
-          name: '午後休',
-          holiday: '2020-08-28',
-          startTime: '13:00',
-          endTime: '18:00',
-          remarks: '備考3',
-        },
-      ];
+      this.items = this.events.filter(function(item) {
+        if (item.name.indexOf('出社') !== 0) {
+          if (store.state.applyHolidayItems.length === 0) {
+            return true;
+          } else {
+            if (store.state.applyHolidayItems.some(applyItem => applyItem.date !== item.date)) {
+              return true;
+            }
+          }
+        }
+      });
     },
 
     /**
@@ -284,11 +272,11 @@ export default {
           ' 【' +
           item.name +
           ' ' +
-          item.holiday +
+          item.date +
           ' ' +
-          item.startTime +
+          item.breakStartTime +
           ' ' +
-          item.endTime +
+          item.breakEndTime +
           '】'
       ) && this.items.splice(index, 1);
     },
@@ -309,7 +297,6 @@ export default {
      */
     save() {
       if (this.editedIndex > -1) {
-        //Object.assign(this.items[this.editedIndex], this.editedItem);
         this.items.splice(this.editedIndex, 1, this.editedItem);
       } else {
         this.items.push(this.editedItem);
@@ -322,13 +309,14 @@ export default {
      */
     apply() {
       if (confirm('選択した休暇を申請してよろしいですか？')) {
-        // 選択した要素を申請配列にコピー
-        this.applyItems = this.selected.concat();
+        this.applyHoliday({
+          selected: this.selected,
+        });
 
         // 選択した要素をitems配列から削除
         this.selected.forEach(element => {
           this.items.forEach((element2, index) => {
-            if (element.holiday === element2.holiday) {
+            if (element.date === element2.date) {
               this.items.splice(index, 1);
             }
           });
@@ -342,16 +330,16 @@ export default {
     autoInputTime() {
       switch (this.editedItem.name) {
         case '午前休':
-          this.editedItem.startTime = '09:00';
-          this.editedItem.endTime = '13:00';
+          this.editedItem.breakStartTime = '09:00';
+          this.editedItem.breakEndTime = '13:00';
           break;
         case '午後休':
-          this.editedItem.startTime = '14:00';
-          this.editedItem.endTime = '18:00';
+          this.editedItem.breakStartTime = '14:00';
+          this.editedItem.breakEndTime = '18:00';
           break;
         case '全休':
-          this.editedItem.startTime = '09:00';
-          this.editedItem.endTime = '18:00';
+          this.editedItem.breakStartTime = '09:00';
+          this.editedItem.breakEndTime = '18:00';
           break;
       }
     },
