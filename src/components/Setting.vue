@@ -6,7 +6,7 @@
       </v-col>
       <v-col cols="12" sm="6" md="4">
         <v-select
-          v-model="weekdays"
+          v-model="weekdaysDisp"
           :items="weekdaysOptions"
           dense
           outlined
@@ -15,17 +15,24 @@
         ></v-select>
       </v-col>
     </v-row>
+    <v-row
+      ><v-spacer></v-spacer
+      ><v-btn color="primary" dark class="mb-2" @click="saveWeekdays">保存</v-btn></v-row
+    >
   </v-container>
 </template>
 
 <script>
-const weekdaysDefault = [0, 1, 2, 3, 4, 5, 6];
+/**
+ * 設定画面コンポーネント
+ */
+import { mapState, mapMutations } from 'vuex';
 
 export default {
   data: () => ({
-    weekdays: weekdaysDefault,
+    weekdaysDisp: [],
     weekdaysOptions: [
-      { text: '日', value: weekdaysDefault },
+      { text: '日', value: [0, 1, 2, 3, 4, 5, 6] },
       { text: '月', value: [1, 2, 3, 4, 5, 6, 0] },
       { text: '火', value: [2, 3, 4, 5, 6, 0, 1] },
       { text: '水', value: [3, 4, 5, 6, 0, 1, 2] },
@@ -34,5 +41,38 @@ export default {
       { text: '土', value: [6, 0, 1, 2, 3, 4, 5] },
     ],
   }),
+
+  computed: {
+    ...mapState(['weekdays']),
+  },
+
+  /**
+   * @description 初期化処理の呼び出し（DOM生成前）
+   */
+  created() {
+    this.initialize();
+  },
+
+  methods: {
+    ...mapMutations(['updateWeekdays']),
+
+    /**
+     * @description 初期化処理
+     */
+    initialize() {
+      this.weekdaysDisp = this.weekdays;
+    },
+
+    /**
+     * @description 保存処理
+     */
+    saveWeekdays() {
+      if (confirm('設定を保存しますか？')) {
+        this.updateWeekdays({
+          weekdays: this.weekdaysDisp,
+        });
+      }
+    },
+  },
 };
 </script>

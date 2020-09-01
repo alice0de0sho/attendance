@@ -222,7 +222,7 @@ export default {
   },
 
   /**
-   * @description 初期化処理の呼び出し（DOM生成前）
+   * @description 初期化処理の呼び出し（DOM生成後）
    */
   mounted() {
     this.initialize();

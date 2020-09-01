@@ -22,6 +22,7 @@
           :now="today"
           :events="events"
           :event-color="getEventColor"
+          :weekdays="weekdaysDisp"
           @click:date="createEvent"
           @click:event="showEvent"
         >
@@ -63,10 +64,18 @@ export default {
     snackbar: false,
     snackbarText: '',
     compTitle: '',
+    weekdaysDisp: [],
   }),
 
   computed: {
-    ...mapState(['events']),
+    ...mapState(['events', 'weekdays']),
+  },
+
+  /**
+   * @description 初期化処理の呼び出し（DOM生成前）
+   */
+  created() {
+    this.initialize();
   },
 
   components: {
@@ -75,6 +84,13 @@ export default {
 
   methods: {
     ...mapMutations(['createEvents', 'updateEvents']),
+
+    /**
+     * @description 初期化処理
+     */
+    initialize() {
+      this.weekdaysDisp = this.weekdays;
+    },
 
     /**
      * @description 勤怠状況を新規登録

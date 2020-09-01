@@ -1,12 +1,15 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
+const weekdaysDefault = [0, 1, 2, 3, 4, 5, 6];
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
     events: [],
     applyHolidayItems: [],
+    weekdays: weekdaysDefault,
   },
   mutations: {
     /**
@@ -37,6 +40,16 @@ export default new Vuex.Store({
      */
     applyHoliday(state, payload) {
       state.applyHolidayItems = payload.selected.concat();
+    },
+
+    /**
+     * 曜日始まり 保存(更新)
+     *
+     * @param {*} state
+     * @param {*} payload
+     */
+    updateWeekdays(state, payload) {
+      state.weekdays = payload.weekdays;
     },
   },
   getters: {},
