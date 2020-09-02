@@ -5,14 +5,11 @@
         曜日始まり
       </v-col>
       <v-col cols="12" sm="6" md="4">
-        <v-select
-          v-model="weekdaysDisp"
-          :items="weekdaysOptions"
-          dense
-          outlined
-          hide-details
-          class="mt-3"
-        ></v-select>
+        <v-btn-toggle v-model="weekdaysDisp" mandatory color="primary">
+          <v-btn v-for="weekday in weekdaysOptions" :key="weekday.value">
+            {{ weekday.text }}
+          </v-btn>
+        </v-btn-toggle>
       </v-col>
     </v-row>
     <v-row
@@ -32,13 +29,8 @@ export default {
   data: () => ({
     weekdaysDisp: [],
     weekdaysOptions: [
-      { text: '日', value: [0, 1, 2, 3, 4, 5, 6] },
-      { text: '月', value: [1, 2, 3, 4, 5, 6, 0] },
-      { text: '火', value: [2, 3, 4, 5, 6, 0, 1] },
-      { text: '水', value: [3, 4, 5, 6, 0, 1, 2] },
-      { text: '木', value: [4, 5, 6, 0, 1, 2, 3] },
-      { text: '金', value: [5, 6, 0, 1, 2, 3, 4] },
-      { text: '土', value: [6, 0, 1, 2, 3, 4, 5] },
+      { text: '日曜日', value: [0, 1, 2, 3, 4, 5, 6] },
+      { text: '月曜日', value: [1, 2, 3, 4, 5, 6, 0] },
     ],
   }),
 
@@ -60,7 +52,7 @@ export default {
      * @description 初期化処理
      */
     initialize() {
-      this.weekdaysDisp = this.weekdays;
+      this.weekdaysDisp = this.weekdays.index;
     },
 
     /**
@@ -69,7 +61,8 @@ export default {
     saveWeekdays() {
       if (confirm('設定を保存しますか？')) {
         this.updateWeekdays({
-          weekdays: this.weekdaysDisp,
+          index: this.weekdaysDisp,
+          value: this.weekdaysOptions[this.weekdaysDisp].value,
         });
       }
     },

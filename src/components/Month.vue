@@ -89,7 +89,7 @@ export default {
      * @description 初期化処理
      */
     initialize() {
-      this.weekdaysDisp = this.weekdays;
+      this.weekdaysDisp = this.weekdays.value;
     },
 
     /**

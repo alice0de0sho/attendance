@@ -9,7 +9,7 @@ export default new Vuex.Store({
   state: {
     events: [],
     applyHolidayItems: [],
-    weekdays: weekdaysDefault,
+    weekdays: { index: 0, value: weekdaysDefault },
   },
   mutations: {
     /**
@@ -49,7 +49,8 @@ export default new Vuex.Store({
      * @param {*} payload
      */
     updateWeekdays(state, payload) {
-      state.weekdays = payload.weekdays;
+      state.weekdays.index = payload.index;
+      state.weekdays.value = payload.value;
     },
   },
   getters: {},
