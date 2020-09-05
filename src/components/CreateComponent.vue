@@ -86,6 +86,40 @@
                   ></v-time-picker>
                 </v-menu>
               </v-col>
+
+              <v-col cols="4" sm="4" md="4">
+                <v-menu
+                  ref="menu3"
+                  v-model="menuBreakTime"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  :return-value.sync="breakTime"
+                  transition="scale-transition"
+                  offset-y
+                  max-width="290px"
+                  min-width="290px"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="breakTime"
+                      label="休憩時間"
+                      prepend-icon="mdi-clock-outline"
+                      readonly
+                      :disabled="disabledText"
+                      v-bind="attrs"
+                      v-on="on"
+                    ></v-text-field>
+                  </template>
+                  <v-time-picker
+                    v-if="menuBreakTime"
+                    v-model="breakTime"
+                    full-width
+                    @click:minute="$refs.menuBreakTime.save(breakTime)"
+                    format="24hr"
+                  ></v-time-picker>
+                </v-menu>
+              </v-col>
+
               <v-col cols="12" sm="12" md="12">
                 <v-radio-group v-model="color" row>
                   <v-radio label="red" color="red" value="red"></v-radio>
@@ -131,6 +165,7 @@ export default {
     dialog: false,
     start: null,
     end: null,
+    breakTime: null,
     date: '',
     name: '',
     items: ['出社', '全休', '午前休', '午後休'],
@@ -140,6 +175,7 @@ export default {
     errMessage: '',
     menuStart: false,
     menuEnd: false,
+    menuBreakTime: false,
     disabledText: false,
     breakStartTime: null,
     breakEndTime: null,
@@ -160,6 +196,7 @@ export default {
       this.date = date;
       this.start = null;
       this.end = null;
+      this.breakTime = null;
       this.name = '';
       this.remarks = '';
       this.color = '';
@@ -177,10 +214,12 @@ export default {
       if (event.name !== '全休') {
         this.start = moment(event.start).format('HH:mm');
         this.end = moment(event.end).format('HH:mm');
+        this.breakTime = event.breakTime;
         this.disabledText = false;
       } else {
         this.start = null;
         this.end = null;
+        this.breakTime = null;
         this.disabledText = true;
       }
       this.name = event.name;
@@ -223,6 +262,7 @@ export default {
       if (this.name === '全休') {
         this.start = '00:00';
         this.end = '00:00';
+        this.breakTime = '00:00';
       }
 
       switch (this.name) {
@@ -244,6 +284,7 @@ export default {
         name: this.name,
         start: this.date + ' ' + this.start,
         end: this.date + ' ' + this.end,
+        breakTime: this.breakTime,
         color: this.color,
         remarks: this.remarks,
         date: this.date,
@@ -300,21 +341,25 @@ export default {
         case '出社':
           this.start = '09:00';
           this.end = '18:00';
+          this.breakTime = '01:00';
           this.disabledText = false;
           break;
         case '午前休':
           this.start = '14:00';
           this.end = '18:00';
+          this.breakTime = '01:00';
           this.disabledText = false;
           break;
         case '午後休':
           this.start = '09:00';
           this.end = '13:00';
+          this.breakTime = '01:00';
           this.disabledText = false;
           break;
         case '全休':
           this.start = '';
           this.end = '';
+          this.breakTime = '';
           this.disabledText = true;
           break;
       }
