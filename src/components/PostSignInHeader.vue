@@ -15,7 +15,18 @@
             <v-icon>mdi-palm-tree</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>休暇申請</v-list-item-title>
+            <v-badge
+              color="red"
+              v-if="vacationItemsCount > 0"
+              :content="vacationItemsCount"
+              offset-x="20"
+              offset-y="17"
+            >
+              <v-list-item-title>休暇申請</v-list-item-title>
+            </v-badge>
+            <template v-else>
+              <v-list-item-title>休暇申請</v-list-item-title>
+            </template>
           </v-list-item-content>
         </v-list-item>
         <v-list-item link to="/setting">
@@ -53,10 +64,27 @@
 /**
  * サインイン後ヘッダーコンポーネント
  */
+import store from '../store';
+
 export default {
   name: 'header2',
   data: () => ({
     drawer: null,
   }),
+  computed: {
+    vacationItemsCount: function() {
+      return store.state.events.filter(function(item) {
+        if (item.name.indexOf('出社') !== 0) {
+          if (store.state.applyHolidayItems.length === 0) {
+            return true;
+          } else {
+            if (store.state.applyHolidayItems.some(applyItem => applyItem.date !== item.date)) {
+              return true;
+            }
+          }
+        }
+      }).length;
+    },
+  },
 };
 </script>

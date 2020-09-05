@@ -11,14 +11,17 @@
 
             <v-row>
               <v-col cols="12" sm="12" md="12">
+                <v-select label="区分" :items="items" v-model="name" @change="autoInputTime"></v-select>
+              </v-col>
+              <!-- <v-col cols="6" sm="6" md="6">
                 <v-select
                   label="区分"
                   :items="items"
                   v-model="name"
                   @change="autoInputTime"
                 ></v-select>
-              </v-col>
-              <v-col cols="6" sm="6" md="6">
+              </v-col>-->
+              <v-col cols="4" sm="4" md="4">
                 <v-menu
                   ref="menu"
                   v-model="menuStart"
@@ -51,7 +54,7 @@
                 </v-menu>
               </v-col>
 
-              <v-col cols="6" sm="6" md="6">
+              <v-col cols="4" sm="4" md="4">
                 <v-menu
                   ref="menu2"
                   v-model="menuEnd"
@@ -90,7 +93,7 @@
                   <v-radio label="blue" color="blue" value="blue"></v-radio>
                   <v-radio label="green" color="green" value="green"></v-radio>
                   <v-radio label="orange" color="orange" value="orange"></v-radio>
-                  <v-radio label="gray" color="gray" value="gray"></v-radio>
+                  <v-radio label="black" color="black" value="black"></v-radio>
                 </v-radio-group>
               </v-col>
 
@@ -109,8 +112,7 @@
               dialog = false;
               resetScrollTop();
             "
-            >閉じる</v-btn
-          >
+          >閉じる</v-btn>
           <v-btn color="blue darken-1" text @click="save">保存</v-btn>
         </v-card-actions>
       </v-card>
