@@ -347,13 +347,13 @@ export default {
         case '午前休':
           this.start = '14:00';
           this.end = '18:00';
-          this.breakTime = '01:00';
+          this.breakTime = '00:00';
           this.disabledText = false;
           break;
         case '午後休':
           this.start = '09:00';
           this.end = '13:00';
-          this.breakTime = '01:00';
+          this.breakTime = '00:00';
           this.disabledText = false;
           break;
         case '全休':

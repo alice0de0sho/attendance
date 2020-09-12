@@ -8,7 +8,7 @@
               <v-chip x-small>合計</v-chip>
               <br />
               <v-avatar size="44" color="teal">
-                <span class="white--text subheading">100:00</span>
+                <span class="white--text subheading">{{ totalTime(month) }}</span>
               </v-avatar>
             </v-card-text>
           </v-card>
@@ -74,7 +74,7 @@
  */
 import CreateComponent from './CreateComponent';
 import moment from 'moment';
-import { mapState, mapMutations } from 'vuex';
+import { mapState, mapMutations, mapGetters } from 'vuex';
 
 export default {
   name: 'month',
@@ -92,6 +92,7 @@ export default {
 
   computed: {
     ...mapState(['events', 'weekdays']),
+    ...mapGetters(['totalTime']),
   },
 
   /**
