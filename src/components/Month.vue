@@ -1,16 +1,40 @@
 <template>
   <v-container class="fill-height">
     <v-col>
-      <v-sheet height="40" color="grey lighten-3" class="d-flex">
-        <v-btn icon color="blue" @click="$refs.calendar.prev()">
+      <v-sheet height="60">
+        <v-row justify="center">
+          <v-card elevation="0" class="mx-1">
+            <v-card-text class="pa-0">
+              <v-chip x-small>合計</v-chip>
+              <br />
+              <v-avatar size="44" color="teal">
+                <span class="white--text subheading">100:00</span>
+              </v-avatar>
+            </v-card-text>
+          </v-card>
+          <v-card elevation="0" class="mx-1">
+            <v-card-text class="pa-0">
+              <v-chip x-small>残業</v-chip>
+              <br />
+              <v-avatar size="44" color="teal">
+                <span class="white--text subheading">00:00</span>
+              </v-avatar>
+            </v-card-text>
+          </v-card>
+        </v-row>
+      </v-sheet>
+      <v-sheet height="40" color="grey lighten-3" class="d-flex mt-2">
+        <v-btn icon color="blue" @click="prev">
           <v-icon dark>mdi-chevron-left</v-icon>
         </v-btn>
         <v-spacer></v-spacer>
-        <v-btn icon color="blue" @click="$refs.calendar.next()">
+        <div class="pt-2">{{ month }}</div>
+        <v-spacer></v-spacer>
+        <v-btn icon color="blue" @click="next">
           <v-icon dark>mdi-chevron-right</v-icon>
         </v-btn>
       </v-sheet>
-      <v-sheet height="600">
+      <v-sheet height="450">
         <v-calendar
           ref="calendar"
           locale="ja-jp"
@@ -27,11 +51,9 @@
           @click:event="showEvent"
         >
           <template v-slot:event="props">
-            <div class="pl-1">
-              {{ props.event.name }}
-            </div>
-          </template></v-calendar
-        >
+            <div class="pl-1">{{ props.event.name }}</div>
+          </template>
+        </v-calendar>
         <div id="form-modal">
           <create-component ref="form" @save="saveEvent" :title="compTitle"></create-component>
         </div>
@@ -65,6 +87,7 @@ export default {
     snackbarText: '',
     compTitle: '',
     weekdaysDisp: [],
+    month: moment(new Date()).format('YYYY-MM'),
   }),
 
   computed: {
@@ -78,6 +101,9 @@ export default {
     this.initialize();
   },
 
+  mounted() {
+    this.$refs.calendar.checkChange();
+  },
   components: {
     CreateComponent,
   },
@@ -161,12 +187,17 @@ export default {
     getEventColor(event) {
       return event.color;
     },
-
+    setToday() {
+      this.focus = '';
+    },
     /**
      * @description カレンダーを前月へ
      */
     prev() {
       this.$refs.calendar.prev();
+      this.month = moment(this.month)
+        .subtract(1, 'M')
+        .format('YYYY-MM');
     },
 
     /**
@@ -174,6 +205,9 @@ export default {
      */
     next() {
       this.$refs.calendar.next();
+      this.month = moment(this.month)
+        .add(1, 'M')
+        .format('YYYY-MM');
     },
   },
 };
