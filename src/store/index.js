@@ -78,9 +78,12 @@ export default new Vuex.Store({
         let diff = moment(item.end).diff(item.start, 'hours');
         // 休憩時間を取得
         let breakTime = moment(item.date + ' ' + item.breakTime).hours();
+        // 18:00超えの数値を取得
+        let overTime = moment(item.end).diff(moment(item.date + ' 18:00'), 'hours');
+        overTime < 0 ? (overTime = 0) : overTime;
         // 【mode：1】労働時間に休憩時間を引いた数値を追記する
-        // 【mode：2】上記に更に-8した数値を追記
-        mode === 1 ? (time += diff - breakTime) : (time += diff - breakTime - 8);
+        // 【mode：2】18:00超え時間を追記する
+        mode === 1 ? (time += diff - breakTime) : (time += overTime);
       });
 
       // 選択月の合計・残業時間を返す
