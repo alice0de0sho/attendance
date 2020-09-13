@@ -40,7 +40,7 @@ export default new Vuex.Store({
      * @param {*} payload
      */
     applyHoliday(state, payload) {
-      state.applyHolidayItems = payload.selected.concat();
+      state.applyHolidayItems.push(payload.selected);
     },
 
     /**
@@ -55,6 +55,33 @@ export default new Vuex.Store({
     },
   },
   getters: {
+    /**
+     * 未申請の休暇情報を取得
+     *
+     * @param {*} state
+     */
+    vacationInfo: state => {
+      return state.events.filter(function(item) {
+        // 区分「出社」以外
+        if (item.name.indexOf('出社') !== 0) {
+          // 休暇情報が全て未申請(lengthが0)の場合
+          if (state.applyHolidayItems.length === 0) return true;
+          // 休暇情報の中で、申請が済んでいない情報がある場合
+          if (!state.applyHolidayItems.some(applyItem => applyItem.date === item.date)) return true;
+        }
+      });
+    },
+
+    /**
+     * 未申請の休暇情報の件数を取得
+     *
+     * @param {*} state
+     * @param {*} getters
+     */
+    vacationInfoCount: (state, getters) => {
+      return getters.vacationInfo.length;
+    },
+
     /**
      * 選択月の合計・残業時間算出
      *

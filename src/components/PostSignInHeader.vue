@@ -17,8 +17,8 @@
           <v-list-item-content>
             <v-badge
               color="red"
-              v-if="vacationItemsCount > 0"
-              :content="vacationItemsCount"
+              v-if="vacationInfoCount > 0"
+              :content="vacationInfoCount"
               offset-x="20"
               offset-y="17"
             >
@@ -64,7 +64,7 @@
 /**
  * サインイン後ヘッダーコンポーネント
  */
-import store from '../store';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'header2',
@@ -72,19 +72,7 @@ export default {
     drawer: null,
   }),
   computed: {
-    vacationItemsCount: function() {
-      return store.state.events.filter(function(item) {
-        if (item.name.indexOf('出社') !== 0) {
-          if (store.state.applyHolidayItems.length === 0) {
-            return true;
-          } else {
-            if (store.state.applyHolidayItems.some(applyItem => applyItem.date !== item.date)) {
-              return true;
-            }
-          }
-        }
-      }).length;
-    },
+    ...mapGetters(['vacationInfoCount']),
   },
 };
 </script>

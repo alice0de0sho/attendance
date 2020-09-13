@@ -159,8 +159,7 @@
 /**
  * 休暇申請コンポーネント
  */
-import { mapMutations } from 'vuex';
-import store from '../store';
+import { mapMutations, mapGetters } from 'vuex';
 
 export default {
   data: () => ({
@@ -207,6 +206,7 @@ export default {
     formTitle() {
       return this.editedIndex === -1 ? '新規作成' : '更新';
     },
+    ...mapGetters(['vacationInfo']),
   },
 
   watch: {
@@ -233,17 +233,7 @@ export default {
      * @description 初期化処理
      */
     initialize() {
-      this.items = store.state.events.filter(function(item) {
-        if (item.name.indexOf('出社') !== 0) {
-          if (store.state.applyHolidayItems.length === 0) {
-            return true;
-          } else {
-            if (store.state.applyHolidayItems.some(applyItem => applyItem.date !== item.date)) {
-              return true;
-            }
-          }
-        }
-      });
+      this.items = this.vacationInfo;
     },
 
     /**
@@ -305,8 +295,10 @@ export default {
     apply() {
       if (this.selected.length === 0) return;
       if (confirm('選択した休暇を申請してよろしいですか？')) {
-        this.applyHoliday({
-          selected: this.selected,
+        this.selected.forEach(element => {
+          this.applyHoliday({
+            selected: element,
+          });
         });
 
         // 選択した要素をitems配列から削除
