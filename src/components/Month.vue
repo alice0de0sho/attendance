@@ -8,7 +8,7 @@
               <v-chip x-small>合計</v-chip>
               <br />
               <v-avatar size="44" color="teal">
-                <span class="white--text subheading">{{ totalTime(month) }}</span>
+                <span class="white--text subheading">{{ totalTime(month, 1) }}</span>
               </v-avatar>
             </v-card-text>
           </v-card>
@@ -17,7 +17,7 @@
               <v-chip x-small>残業</v-chip>
               <br />
               <v-avatar size="44" color="teal">
-                <span class="white--text subheading">00:00</span>
+                <span class="white--text subheading">{{ totalTime(month, 2) }}</span>
               </v-avatar>
             </v-card-text>
           </v-card>

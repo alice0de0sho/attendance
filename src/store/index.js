@@ -56,13 +56,14 @@ export default new Vuex.Store({
   },
   getters: {
     /**
-     * 選択月の合計時間算出
+     * 選択月の合計・残業時間算出
      *
      * @param {*} state
      * @param {*} targetMonth
+     * @param {*} mode
      */
-    totalTime: state => targetMonth => {
-      // カレンダーで選択した月のデータがない場合は合計時間を00:00で返す
+    totalTime: state => (targetMonth, mode) => {
+      // カレンダーで選択した月のデータがない場合は合計・残業時間を00:00で返す
       if (state.events.length == 0) return '00:00';
 
       // カレンダーで選択した月のデータを取得
@@ -77,11 +78,12 @@ export default new Vuex.Store({
         let diff = moment(item.end).diff(item.start, 'hours');
         // 休憩時間を取得
         let breakTime = moment(item.date + ' ' + item.breakTime).hours();
-        // 労働時間に休憩時間を引いた数値を追記する
-        time += diff - breakTime;
+        // 【mode：1】労働時間に休憩時間を引いた数値を追記する
+        // 【mode：2】上記に更に-8した数値を追記
+        mode === 1 ? (time += diff - breakTime) : (time += diff - breakTime - 8);
       });
 
-      // 選択月の総合計時間を返す
+      // 選択月の合計・残業時間を返す
       return time < 10 ? '0' + time + ':00' : time + ':00';
     },
   },
